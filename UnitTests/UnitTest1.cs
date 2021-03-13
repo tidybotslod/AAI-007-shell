@@ -13,10 +13,26 @@ using AAI;
 
 namespace UnitTests
 {
+
     [TestClass]
     public class UnitTest1
     {
         public static QnAService service;
+
+        [AssemblyInitialize]
+        public static void AssemblyInit(TestContext context)
+        {
+            IConfiguration config; // Load configuration data found in appsettings.json, need Azure authoring key and resource name to build URL to azure.
+            config = new ConfigurationBuilder().AddJsonFile("appsettings.json", optional: false, reloadOnChange: true).Build();
+            service = new QnAService
+            {
+                AuthoringKey = ConfigurationValue(config, "AuthoringKey"),
+                ResourceName = ConfigurationValue(config, "ResourceName"),
+                ApplicationName = ConfigurationValue(config, "ApplicationName"),
+                KnowledgeBaseID = ConfigurationValue(config, "KnowledgeBaseID"),
+                QueryEndpointKey = ConfigurationValue(config, "QueryEndpointKey")
+            };
+        }
 
         private async Task<bool> CreateDatabase()
         {
@@ -84,5 +100,15 @@ namespace UnitTests
             Task.Run(async () => { Assert.IsTrue(await AskQuestion(true)); }).Wait();
         }
 #endif
+
+        private static string ConfigurationValue(IConfiguration config, string name)
+        {
+            string value = config[name];
+            if (value != null && value.Length == 0)
+            {
+                value = null;
+            }
+            return value;
+        }
     }
 }
