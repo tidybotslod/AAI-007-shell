@@ -7,6 +7,7 @@
 
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Azure.CognitiveServices.Knowledge.QnAMaker.Models;
 using AAI;
@@ -66,12 +67,6 @@ namespace UnitTests
             Assert.IsNotNull(answer.Answers[0].Questions);
             Assert.AreEqual(1, answer.Answers[0].Questions.Count);
             return true;
-        }
-
-        [AssemblyInitialize]
-        public static void AssemblyInit(TestContext context)
-        {
-            service = new QnAService();
         }
 
         //
